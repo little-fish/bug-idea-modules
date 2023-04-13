@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.5'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(
+            'org.springframework.boot:spring-boot-starter-web'
+    )
+}
+
+sourceSets {
+    local {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    localImplementation.extendsFrom(implementation)
+    localRuntimeOnly.extendsFrom(runtimeOnly)
+}
+
+springBoot {
+    mainClass = 'foo.bar.Application'
+}
+
+tasks.register('bootRunLocal', org.springframework.boot.gradle.tasks.run.BootRun) {
+    group = 'application'
+    classpath = sourceSets.local.runtimeClasspath
+    mainClass.set(springBoot.mainClass)
+    jvmArgs += '-Dspring.profiles.active=local'
+}
